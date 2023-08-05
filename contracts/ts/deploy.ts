@@ -163,17 +163,23 @@ const deployFreeForAllSignUpGatekeeper = async (
 
 
 const deployPoseidonContracts = async (quiet = false) => {
-    const PoseidonT3Contract = await deployContract('PoseidonT3', quiet)
-    const PoseidonT4Contract = await deployContract('PoseidonT4', quiet)
-    const PoseidonT5Contract = await deployContract('PoseidonT5', quiet)
-    const PoseidonT6Contract = await deployContract('PoseidonT6', quiet)
-
-    return {
-        PoseidonT3Contract,
-        PoseidonT4Contract,
-        PoseidonT5Contract,
-        PoseidonT6Contract,
+    try {
+        const PoseidonT3Contract = await deployContract('PoseidonT3', quiet)
+        const PoseidonT4Contract = await deployContract('PoseidonT4', quiet)
+        const PoseidonT5Contract = await deployContract('PoseidonT5', quiet)
+        const PoseidonT6Contract = await deployContract('PoseidonT6', quiet)
+    
+        return {
+            PoseidonT3Contract,
+            PoseidonT4Contract,
+            PoseidonT5Contract,
+            PoseidonT6Contract,
+        }
+    } catch (e){
+        console.log(e.message);
+        throw e;
     }
+    
 }
 
 const deployPollFactory = async (quiet = false) => {
@@ -268,34 +274,39 @@ const deployMaci = async (
         'PollFactory',
         quiet
     )
-
-    const maciContract = await deployContractWithLinkedLibraries(
-        maciContractFactory, 
-        'MACI',
-        quiet,
-        pollFactoryContract.address,
-        signUpTokenGatekeeperContractAddress,
-        initialVoiceCreditBalanceAddress
-    )
-
-    log('Transferring ownership of PollFactoryContract to MACI', quiet)
-    await transferOwnership(pollFactoryContract, maciContract.address, quiet)
-
-    await initMaci(maciContract, quiet, vkRegistryContractAddress, topupCreditContractAddress)
-
-    const [ AccQueueQuinaryMaciAbi, ] = parseArtifact('AccQueue')
-    const stateAqContractAddress = await maciContract.stateAq()
-    const stateAqContract = new ethers.Contract(
-        stateAqContractAddress,
-        AccQueueQuinaryMaciAbi,
-        await getDefaultSigner(),
-    )
-
-    return {
-        maciContract,
-        stateAqContract,
-        pollFactoryContract,
+    try {
+        const maciContract = await deployContractWithLinkedLibraries(
+            maciContractFactory, 
+            'MACI',
+            quiet,
+            pollFactoryContract.address,
+            signUpTokenGatekeeperContractAddress,
+            initialVoiceCreditBalanceAddress
+        )
+    
+        log('Transferring ownership of PollFactoryContract to MACI', quiet)
+        await transferOwnership(pollFactoryContract, maciContract.address, quiet)
+    
+        await initMaci(maciContract, quiet, vkRegistryContractAddress, topupCreditContractAddress)
+    
+        const [ AccQueueQuinaryMaciAbi, ] = parseArtifact('AccQueue')
+        const stateAqContractAddress = await maciContract.stateAq()
+        const stateAqContract = new ethers.Contract(
+            stateAqContractAddress,
+            AccQueueQuinaryMaciAbi,
+            await getDefaultSigner(),
+        )
+    
+        return {
+            maciContract,
+            stateAqContract,
+            pollFactoryContract,
+        }
+    } catch (e) {
+        console.log(e.message);
+        throw e;
     }
+    
 }
 
 const writeContractAddresses = (

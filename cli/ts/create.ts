@@ -107,7 +107,7 @@ const create = async (args: any) => {
     const verifierContract = await deployVerifier(true)
 
     const vkRegistryContractAddress = args.vk_registry ? args.vk_registry: contractAddrs["VkRegistry"]
-
+    
     const {
         maciContract,
         stateAqContract,
