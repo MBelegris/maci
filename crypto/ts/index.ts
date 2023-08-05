@@ -4,6 +4,7 @@ import * as ethers from 'ethers'
 const ff = require('ffjavascript')
 const createBlakeHash = require('blake-hash')
 import { babyJub, poseidon, poseidonEncrypt, poseidonDecrypt, eddsa } from 'circomlib'
+import jive_mode = require("./anemoi/jive")
 import { AccQueue } from './AccQueue'
 import { OptimisedMT as IncrementalQuinTree } from 'optimisedmt'
 const stringifyBigInts: (obj: object) => any = ff.utils.stringifyBigInts
@@ -127,6 +128,86 @@ const sha256Hash = (input: BigInt[]) => {
             input.map((x) => x.toString()),
         ),
     ) % SNARK_FIELD_SIZE
+}
+
+const anemoiT3 = (inputs: BigInt[]) => {
+    assert(inputs.length === 2)
+    return jive_mode(inputs);
+}
+
+const anemoiT4 = (inputs: BigInt[]) => {
+    assert(inputs.length === 3)
+    return jive_mode(inputs);
+}
+
+const anemoiT5 = (inputs: BigInt[]) => {
+    assert(inputs.length === 4)
+    return jive_mode(inputs);
+}
+
+const anemoiT6 = (inputs: BigInt[]) => {
+    assert(inputs.length === 5)
+    return jive_mode(inputs);
+}
+
+const anemoiHashN = (numElements: number, elements: Plaintext): BigInt => {
+    const elementLength = elements.length
+    if (elements.length > numElements) {
+        throw new TypeError(`the length of the elements array should be at most ${numElements}; got ${elements.length}`)
+    }
+    const elementsPadded = elements.slice()
+    if (elementLength < numElements) {
+        for (let i = elementLength; i < numElements; i++) {
+            elementsPadded.push(BigInt(0))
+        }
+    }
+
+    const funcs = {
+        2: anemoiT3,
+        3: anemoiT4,
+        4: anemoiT5,
+        5: anemoiT6,
+    }
+
+    return funcs[numElements](elements)
+}
+
+const anemoiHash2 = (elements: Plaintext): BigInt => anemoiHashN(2, elements)
+const anemoiHash3 = (elements: Plaintext): BigInt => anemoiHashN(3, elements)
+const anemoiHash4 = (elements: Plaintext): BigInt => anemoiHashN(4, elements)
+const anemoiHash5 = (elements: Plaintext): BigInt => anemoiHashN(5, elements)
+
+const anemoiHash13 = (elements: Plaintext): BigInt => {
+    const max = 13
+    const elementLength = elements.length
+    if (elementLength > max) {
+        throw new TypeError(`the length of the elements array should be at most 10; got ${elements.length}`)
+    }
+    const elementsPadded = elements.slice()
+    if (elementLength < max) {
+        for (let i = elementLength; i < max; i++) {
+            elementsPadded.push(BigInt(0))
+        }
+    }
+    return anemoiT6([
+        elementsPadded[0],
+        anemoiT6(elementsPadded.slice(1, 6)),
+        anemoiT6(elementsPadded.slice(6, 11)),
+        elementsPadded[11],
+        elementsPadded[12],
+    ])
+}
+
+const anemoiHashOne = (preImage: BigInt): BigInt => {
+
+    return anemoiT3([preImage, BigInt(0)])
+}
+
+/*
+ * Hash two BigInts with the Anemoi hash function
+ */
+const anemoiHashLeftRight = (left: BigInt, right: BigInt): BigInt => {
+    return anemoiT3([left, right])
 }
 
 // Hash up to 2 elements
