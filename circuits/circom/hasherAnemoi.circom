@@ -1,4 +1,4 @@
-pragma circom 2.0.0
+pragma circom 2.0.0;
 include "./anemoi/anemoiHashT3.circom";
 include "./anemoi/anemoiHashT4.circom";
 include "./anemoi/anemoiHashT5.circom";
@@ -27,7 +27,7 @@ template Hasher3(){ // Three inputs exist
     hasher.roundConstantC <== roundConstantC;
     hasher.roundConstantD <== roundConstantD;
 
-    hash <== hasher.out;
+    hash <== hasher.hash;
 }
 
 template Hasher4(){ // Four inputs
@@ -53,7 +53,7 @@ template Hasher4(){ // Four inputs
     hasher.roundConstantC <== roundConstantC;
     hasher.roundConstantD <== roundConstantD;
 
-    hash <== hasher.out;
+    hash <== hasher.hash;
 }
 
 
@@ -82,7 +82,7 @@ template Hasher5() {
     hasher.roundConstantC <== roundConstantC;
     hasher.roundConstantD <== roundConstantD;
 
-    hash <== hasher.out;
+    hash <== hasher.hash;
 }
 
 template Hasher13() {    
@@ -138,18 +138,18 @@ template Hasher13() {
     hasher5_2.roundConstantD <== roundConstantD;
 
     X[0] <== inputs[0];
-    Y[0] <== hasher5_1.out;
-    X[1] <== hasher5_2.out;
-    Y[2] <== inputs[11];
-    X[3] <== inputs[12];
-    Y[3] <== 0;
+    Y[0] <== hasher5_1.hash;
+    X[1] <== hasher5_2.hash;
+    Y[1] <== inputs[11];
+    X[2] <== inputs[12];
+    Y[2] <== 0;
 
     hasher5.X <== X;
     hasher5.Y <== Y;
     hasher5.roundConstantC <== roundConstantC;
     hasher5.roundConstantD <== roundConstantD;
 
-    hash <== hasher5.out;
+    hash <== hasher5.hash;
 }
 
 template HashLeftRight() {
@@ -168,10 +168,10 @@ template HashLeftRight() {
     Y[0] <== inputs[1];
 
     component hasher = AnemoiHashT3();
-    signal input X <== X;
-    signal input Y <== Y;
-    signal input roundConstantC <== roundConstantC;
-    signal input roundConstantD <== roundConstantD;
+    hasher.X <== X;
+    hasher.Y <== Y;
+    hasher.roundConstantC <== roundConstantC;
+    hasher.roundConstantD <== roundConstantD;
 
-    hash <== hasher.out;    
+    hash <== hasher.hash;    
 }

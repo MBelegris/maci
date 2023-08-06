@@ -8,6 +8,8 @@ import {
     sha256Hash,
     hash5,
     hash13,
+    anemoiHash5,
+    anemoiHash13,
     verifySignature,
     genRandomSalt,
 } from '../'
@@ -55,6 +57,20 @@ describe('Cryptographic operations', () => {
         expect(s.toString()).toEqual(
             '21788914573420223731318033363701224062123674814818143146813863227479480390499'
         )
+    })
+
+    describe('anemoi hash13', () => {
+        it('Hashing a smaller array should work', () => {
+            const h = anemoiHash13([BigInt(1), BigInt(2), BigInt(3)])
+            expect(h < SNARK_FIELD_SIZE).toBeTruthy()
+        })
+        it('Hashing more than 13 elements should throw', () => {
+            const arr: any[] = []
+            for (let i = 0; i < 14; i++) {
+                arr.push(BigInt(i))
+            }
+            expect(() => anemoiHash13(arr)).toThrow(TypeError)
+        })
     })
 
     describe('hash13', () => {

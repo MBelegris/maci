@@ -31,8 +31,10 @@ function getRoundConstants(prime_field, numRounds, nInputs, generator, alpha, in
         for (var i = 0; i < nInputs; i++){
             var pi_1_i = modPow(pi_1, BigInt(i), prime_field);
             var pow_alpha = modPow((Scalar.add(pi_0_r, pi_1_i)), alpha, prime_field);
-            var constC = Scalar.mod(Scalar.add(Scalar.mul(generator, modPow(pi_0_r, BigInt(2), prime_field)), pow_alpha), prime_field);
-            var constD = Scalar.mod(Scalar.add(Scalar.mul(generator, (modPow(pi_1_i, BigInt(2), prime_field))), (pow_alpha+inverse_generator)), prime_field);
+            var constC = BigInt(((generator * modPow(pi_0_r, BigInt(2), prime_field)) + pow_alpha) % prime_field);
+            var constD = BigInt(((generator * modPow(pi_1_i, BigInt(2), prime_field)) + pow_alpha + inverse_generator) % prime_field);
+            // var constC = Scalar.mod(Scalar.add(Scalar.mul(generator, modPow(pi_0_r, BigInt(2), prime_field)), pow_alpha), prime_field);
+            // var constD = Scalar.mod(Scalar.add(Scalar.mul(generator, (modPow(pi_1_i, BigInt(2), prime_field))), (pow_alpha+inverse_generator)), prime_field);
             roundC[r].push(constC);
             roundD[r].push(constD);
         }
@@ -84,8 +86,13 @@ function addConstants(prime_field, nInputs, roundNum, stateX, stateY, roundConst
     for (var i = 0; i < nInputs; i++){
         // console.log("Round Constant C:", roundConstantC[roundNum][i]);
         // console.log("Round Constant D:", roundConstantD[roundNum][i]);
-        outX.push(Scalar.mod(Scalar.add(stateX[i], roundConstantC[roundNum][i]), prime_field));
-        outY.push(Scalar.mod(Scalar.add(stateY[i], roundConstantD[roundNum][i]), prime_field));
+        // outX.push(Scalar.mod(Scalar.add(stateX[i], roundConstantC[roundNum][i]), prime_field));
+        // outY.push(Scalar.mod(Scalar.add(stateY[i], roundConstantD[roundNum][i]), prime_field));
+        var x = (stateX[i] + roundConstantC[roundNum][i]) % prime_field;
+        var y = (stateY[i] + roundConstantD[roundNum][i]) % prime_field;
+        outX.push(x);
+        outY.push(y);
+        
     }
     return [outX, outY]
 }
@@ -112,7 +119,6 @@ function linearLayer(prime_field, nInputs, stateX, stateY, mat) {
             var sumX = BigInt(0);
             var sumY = BigInt(0);
             for (row = 0; row < nInputs; row++){
-                // sumX = sumX + (stateX[row] * ) % prime_field
                 sumX = Scalar.mod(Scalar.add(Scalar.mul(stateX[row], mat[row][col]), sumX), prime_field);
                 sumY = Scalar.mod(Scalar.add(Scalar.mul(stateY[row], mat[row][col]), sumY), prime_field);
             }
@@ -203,7 +209,6 @@ const anemoiPerm = (prime_field, nInputs, numRounds, generator, inverse_generato
             stateY = sBoxLayerRound[1];
             // console.log("S Box Output X:", stateX);
             // console.log("S Box Output Y:", stateY);
-            // console.log("\n\n");
         }
 
         var finalLinearLayer = linearLayer(prime_field, nInputs, stateX, stateY, mat);
