@@ -17,5 +17,5 @@ echo 'Writing empty ballot tree root contract'
 echo 'Building contracts with Hardhat'
 npx hardhat compile
 
-# Build the Poseidon contract from bytecode
+echo Build the Poseidon contract from bytecode
 node build/buildPoseidon.js
