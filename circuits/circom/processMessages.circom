@@ -7,6 +7,7 @@ include "./stateLeafAndBallotTransformer.circom";
 include "./trees/incrementalQuinTree.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
 include "../node_modules/circomlib/circuits/comparators.circom";
+// include "./hasherAnemoi.circom";
 
 /*
  * Proves the correctness of processing a batch of messages.

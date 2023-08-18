@@ -153,8 +153,12 @@ function phtLayer(nInputs, prime_field, stateX, stateY) {
 function sBoxLayer(nInputs, prime_field, stateX, stateY, alpha, beta, gamma, delta) {
     for (i = 0; i < nInputs; i++){
         stateX[i] = Scalar.mod(Scalar.sub(stateX[i], Scalar.add(Scalar.mul(beta, Scalar.pow(stateY[i], BigInt(2))), gamma)), prime_field);
-        stateY[i] = Scalar.mod(Scalar.sub(stateY[i], Scalar.pow(stateX[i], alpha)), prime_field);
-        stateX[i] = Scalar.mod(Scalar.add(stateX[i], Scalar.add(Scalar.mul(beta, Scalar.pow(stateY[i], BigInt(2))), delta)), prime_field);
+        // stateX[i] = (stateX[i] - ((beta*modPow(stateY[i], BigInt(2), prime_field)) + gamma)) % prime_field;
+        // console.log("t:", stateX[i]);
+        // stateY[i] = Scalar.mod(Scalar.sub(stateY[i], modPow(stateX[i], alpha, prime_field)), prime_field);
+        stateY[i] = (stateY[i] - modPow(stateX[i], alpha, prime_field)) % prime_field;
+        // stateX[i] = Scalar.mod(Scalar.add(stateX[i], Scalar.add(Scalar.mul(beta, Scalar.pow(stateY[i], BigInt(2))), delta)), prime_field);
+        stateX[i] = (stateX[i] + (beta*modPow(stateY[i], BigInt(2), prime_field)) + delta) % prime_field;
     }
     return [stateX, stateY]
 }
@@ -181,6 +185,8 @@ const anemoiPerm = (prime_field, nInputs, numRounds, generator, inverse_generato
         // "\nRound Constants C:", roundConstantC,
         // "\nRound Constants D:", roundConstantD
         // );
+        // console.log("Initial X:", stateX);
+        // console.log("Initial Y:", stateY);
 
         for (var round = 0; round < numRounds; round++){
             // console.log("Round:", round);
@@ -204,7 +210,7 @@ const anemoiPerm = (prime_field, nInputs, numRounds, generator, inverse_generato
             // console.log("PHT Output X:", stateX);
             // console.log("PHT Output Y:", stateY);
             
-            var sBoxLayerRound = sBoxLayer(nInputs, prime_field, stateX, stateY, alpha, beta, gamma, delta);
+            var sBoxLayerRound = sBoxLayer(nInputs, prime_field, stateX, stateY, alpha, beta, gamma, delta); 
             stateX = sBoxLayerRound[0];
             stateY = sBoxLayerRound[1];
             // console.log("S Box Output X:", stateX);

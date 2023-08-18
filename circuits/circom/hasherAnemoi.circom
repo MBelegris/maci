@@ -4,12 +4,13 @@ include "./anemoi/anemoiHashT4.circom";
 include "./anemoi/anemoiHashT5.circom";
 include "./anemoi/anemoiHashT6.circom";
 
-template Hasher3(){ // Three inputs exist
+template AnemoiHasher3(){ // Three inputs exist
     var length = 2;
 
     signal input inputs[2*length - 1]; // 3 inputs
     signal input roundConstantC[14][2]; // numRounds x Length
     signal input roundConstantD[14][2]; // numRounds x Length
+    log("Round Constant:", roundConstantC[0][0]);
 
     signal output hash;
 
@@ -30,7 +31,7 @@ template Hasher3(){ // Three inputs exist
     hash <== hasher.hash;
 }
 
-template Hasher4(){ // Four inputs
+template AnemoiHasher4(){ // Four inputs
     var length = 2;
 
     signal input inputs[2*length]; // 4 inputs
@@ -57,7 +58,7 @@ template Hasher4(){ // Four inputs
 }
 
 
-template Hasher5() { 
+template AnemoiHasher5() { 
     var length = 3;
 
     signal input inputs[length*2 - 1]; // 5 inputs
@@ -85,7 +86,7 @@ template Hasher5() {
     hash <== hasher.hash;
 }
 
-template Hasher13() {    
+template AnemoiHasher13() {    
     // Hasher5(
     //     in[0]
     //     Hasher5_1(in[1], in[2], in[3], in[4], in[5]),
@@ -152,7 +153,8 @@ template Hasher13() {
     hash <== hasher5.hash;
 }
 
-template HashLeftRight() {
+template AnemoiHashLeftRight() {
+    log("HERE");
     var length = 1;
 
     signal input inputs[length*2]; // 2 inputs
