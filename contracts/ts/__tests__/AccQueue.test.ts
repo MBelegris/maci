@@ -4,11 +4,14 @@ import {
     IncrementalQuinTree,
     AccQueue,
     hashLeftRight,
+    anemoiHashLeftRight,
     NOTHING_UP_MY_SLEEVE,
+    anemoiHash2,
+    anemoiHash5,
     hash2,
     hash5,
 } from 'maci-crypto'
-import { deployPoseidonContracts, linkPoseidonLibraries } from '../'
+import { deployPoseidonContracts, linkHashingLibraries, linkPoseidonLibraries, deployAnemoiContracts, linkAnemoiLibraries } from '../'
 
 const enqueueGasLimit = { gasLimit: 500000 }
 const fillGasLimit = { gasLimit: 4000000 }
@@ -98,7 +101,7 @@ const testEnqueue = async (
     ZERO: BigInt,
 ) => {
 
-    const hashFunc = HASH_LENGTH === 5 ? hash5 : hash2
+    const hashFunc = HASH_LENGTH === 5 ? anemoiHash5 : anemoiHash2
     const tree0 = new IncrementalQuinTree(SUB_DEPTH, ZERO, HASH_LENGTH, hashFunc)
     const subtreeCapacity = HASH_LENGTH ** SUB_DEPTH
 
@@ -379,17 +382,38 @@ const deploy = async (
     HASH_LENGTH: number,
     ZERO: BigInt,
 ) => {
-    const { PoseidonT3Contract, PoseidonT4Contract, PoseidonT5Contract, PoseidonT6Contract } = await deployPoseidonContracts()
+    const { AnemoiT2Contract, AnemoiT4Contract, AnemoiT6Contract } = await deployAnemoiContracts()
     // Link Poseidon contracts
-	const AccQueueFactory = await linkPoseidonLibraries(
-		contractName,
-		PoseidonT3Contract.address,
-		PoseidonT4Contract.address,
-		PoseidonT5Contract.address,
-		PoseidonT6Contract.address,
-	)
+	// const AccQueueFactory = await linkAnemoiLibraries(
+	// 	contractName,
+	// 	AnemoiT2Contract.address,
+	// 	AnemoiT4Contract.address,
+	// 	AnemoiT6Contract.address,
+	// )
 
-	const aqContract = await AccQueueFactory.deploy(
+    const { PoseidonT3Contract, PoseidonT4Contract, PoseidonT5Contract, PoseidonT6Contract } = await deployPoseidonContracts()
+
+	// const AccQueueFactory = await linkPoseidonLibraries(
+	// 	contractName,
+	// 	PoseidonT3Contract.address,
+	// 	PoseidonT4Contract.address,
+	// 	PoseidonT5Contract.address,
+	// 	PoseidonT6Contract.address
+	// )
+    console.log("Deployed hashing libraries");
+    const AccQueueFactory = await linkHashingLibraries(
+        contractName,
+        PoseidonT3Contract.address,
+        PoseidonT4Contract.address,
+        PoseidonT5Contract.address,
+        PoseidonT6Contract.address,
+        AnemoiT2Contract.address,
+        AnemoiT4Contract.address,
+        AnemoiT6Contract.address
+    )
+    console.log("Linked hashing libraries")
+
+    const aqContract = await AccQueueFactory.deploy(
 		SUB_DEPTH
 	)
 
@@ -407,6 +431,7 @@ describe('AccQueues', () => {
         let aqContract
 
         beforeAll(async () => {
+            console.log("Poop!")
             const r = await deploy(
                 'AccQueueBinary0',
                 SUB_DEPTH,
@@ -692,7 +717,7 @@ describe('AccQueues', () => {
             await (await aqContract.enqueue(0, enqueueGasLimit)).wait()
             await (await aqContract.mergeSubRoots(0, { gasLimit: 1000000 })).wait()
             const srtRoot = await aqContract.getSmallSRTroot()
-            const expectedRoot = hashLeftRight(BigInt(0), BigInt(0))
+            const expectedRoot = anemoiHashLeftRight(BigInt(0), BigInt(0))
             expect(srtRoot.toString()).toEqual(expectedRoot.toString())
         })
 

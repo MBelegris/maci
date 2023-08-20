@@ -4,7 +4,7 @@ import {
     AccQueue,
     NOTHING_UP_MY_SLEEVE,
 } from 'maci-crypto'
-import { deployPoseidonContracts, linkPoseidonLibraries } from '../'
+import { deployPoseidonContracts, linkPoseidonLibraries, deployAnemoiContracts, linkHashingLibraries } from '../'
 
 let aqContract
 let tx
@@ -16,17 +16,31 @@ const deploy = async (
     HASH_LENGTH: number,
     ZERO: BigInt,
 ) => {
+    const { AnemoiT2Contract, AnemoiT4Contract, AnemoiT6Contract } = await deployAnemoiContracts()
     const { PoseidonT3Contract, PoseidonT4Contract, PoseidonT5Contract, PoseidonT6Contract } = await deployPoseidonContracts()
     // Link Poseidon contracts
-	const AccQueueFactory = await linkPoseidonLibraries(
-		contractName,
-		PoseidonT3Contract.address,
-		PoseidonT4Contract.address,
-		PoseidonT5Contract.address,
-		PoseidonT6Contract.address,
-	)
+	// const AccQueueFactory = await linkPoseidonLibraries(
+	// 	contractName,
+	// 	PoseidonT3Contract.address,
+	// 	PoseidonT4Contract.address,
+	// 	PoseidonT5Contract.address,
+	// 	PoseidonT6Contract.address,
+	// )
 
-	aqContract = await AccQueueFactory.deploy(
+    console.log("Deployed hashing libraries");
+    const AccQueueFactory = await linkHashingLibraries(
+        contractName,
+        PoseidonT3Contract.address,
+        PoseidonT4Contract.address,
+        PoseidonT5Contract.address,
+        PoseidonT6Contract.address,
+        AnemoiT2Contract.address,
+        AnemoiT4Contract.address,
+        AnemoiT6Contract.address
+    )
+    console.log("Linked hashing libraries")
+
+    aqContract = await AccQueueFactory.deploy(
 		SUB_DEPTH
 	)
 

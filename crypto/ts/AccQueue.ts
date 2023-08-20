@@ -6,6 +6,8 @@ import {
     stringifyBigInts,
     unstringifyBigInts,
     IncrementalQuinTree,
+    anemoiHash5,
+    anemoiHashLeftRight,
 } from './'
 
 type Leaf = BigInt
@@ -115,11 +117,11 @@ class AccQueue {
         if (this.hashLength === 2) {
             // Uses PoseidonT3 under the hood, which accepts 2 inputs
             this.hashFunc = (inputs: BigInt[]) => {
-                return hashLeftRight(inputs[0], inputs[1])
+                return anemoiHashLeftRight(inputs[0], inputs[1])
             }
         } else {
             // Uses PoseidonT6 under the hood, which accepts up to 5 inputs
-            this.hashFunc = hash5
+            this.hashFunc = anemoiHash5
         }
 
         this.subHashFunc = sha256Hash

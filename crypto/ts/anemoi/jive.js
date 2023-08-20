@@ -97,7 +97,9 @@ const jive_mode = (inputs) => {
                     hash), 
                 prime_field);
     }
-
+    if (hash < BigInt(0)) {
+        hash += prime_field;
+    }
     return hash;
 }
 

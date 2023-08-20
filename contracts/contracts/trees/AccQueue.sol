@@ -9,6 +9,7 @@ import { MerkleZeros as MerkleQuinary0 } from "./zeros/MerkleQuinary0.sol";
 import { MerkleZeros as MerkleQuinaryMaci } from "./zeros/MerkleQuinaryMaci.sol";
 import { MerkleZeros as MerkleQuinaryBlankSl } from "./zeros/MerkleQuinaryBlankSl.sol";
 import { MerkleZeros as MerkleQuinaryMaciWithSha256 } from "./zeros/MerkleQuinaryMaciWithSha256.sol";
+import { AnemoiHasher } from "../crypto/AnemoiHasher.sol";
 
 /*
  * This contract defines a Merkle tree where each leaf insertion only updates a
@@ -17,7 +18,7 @@ import { MerkleZeros as MerkleQuinaryMaciWithSha256 } from "./zeros/MerkleQuinar
  * mergeSubRoots(), and merge(). To get around the gas limit,
  * the mergeSubRoots() can be performed in multiple transactions.
  */
-abstract contract AccQueue is Ownable, Hasher {
+abstract contract AccQueue is Ownable, Hasher, AnemoiHasher {
 
     // The maximum tree depth
     uint256 constant MAX_DEPTH = 32;
@@ -375,14 +376,14 @@ abstract contract AccQueue is Ownable, Hasher {
                 uint256[2] memory inputs;
                 inputs[0] = subRootQueue.levels[_level][0];
                 inputs[1] = _leaf;
-                hashed = hash2(inputs);
+                hashed = anemoiHash2(inputs);
             } else {
                 uint256[5] memory inputs;
                 for (uint8 i = 0; i < n; i ++) {
                     inputs[i] = subRootQueue.levels[_level][i];
                 }
                 inputs[n] = _leaf;
-                hashed = hash5(inputs);
+                hashed = anemoiHash5(inputs);
             }
 
             // TODO: change recursion to a while loop
@@ -441,7 +442,7 @@ abstract contract AccQueue is Ownable, Hasher {
                     uint256[2] memory inputs;
                     inputs[0] = root;
                     inputs[1] = z;
-                    root = hash2(inputs);
+                    root = anemoiHash2(inputs);
                 } else {
                     uint256[5] memory inputs;
                     inputs[0] = root;
@@ -449,7 +450,7 @@ abstract contract AccQueue is Ownable, Hasher {
                     inputs[2] = z;
                     inputs[3] = z;
                     inputs[4] = z;
-                    root = hash5(inputs);
+                    root = anemoiHash5(inputs);
                 }
             }
 
@@ -505,7 +506,7 @@ abstract contract AccQueueBinary is AccQueue {
     constructor(uint256 _subDepth) AccQueue(_subDepth, 2) {}
 
     function hashLevel(uint256 _level, uint256 _leaf) override internal returns (uint256) {
-        uint256 hashed = hashLeftRight(leafQueue.levels[_level][0], _leaf);
+        uint256 hashed = anemoiHashLeftRight(leafQueue.levels[_level][0], _leaf);
 
         // Free up storage slots to refund gas.
         delete leafQueue.levels[_level][0];
@@ -514,7 +515,7 @@ abstract contract AccQueueBinary is AccQueue {
     }
 
     function hashLevelLeaf(uint256 _level, uint256 _leaf) override view public returns (uint256) {
-        uint256 hashed = hashLeftRight(leafQueue.levels[_level][0], _leaf);
+        uint256 hashed = anemoiHashLeftRight(leafQueue.levels[_level][0], _leaf);
         return hashed;
     }
 
@@ -530,7 +531,7 @@ abstract contract AccQueueBinary is AccQueue {
                 uint256 z = getZero(_level);
                 inputs[0] = leafQueue.levels[_level][0];
                 inputs[1] = z;
-                hashed = hash2(inputs);
+                hashed = anemoiHash2(inputs);
 
                 // Update the subtree from the next level onwards with the new leaf
                 _enqueue(hashed, _level + 1);
@@ -555,7 +556,7 @@ abstract contract AccQueueQuinary is AccQueue {
         inputs[2] = leafQueue.levels[_level][2];
         inputs[3] = leafQueue.levels[_level][3];
         inputs[4] = _leaf;
-        uint256 hashed = hash5(inputs);
+        uint256 hashed = anemoiHash5(inputs);
 
         // Free up storage slots to refund gas. Note that using a loop here
         // would result in lower gas savings.
@@ -571,7 +572,7 @@ abstract contract AccQueueQuinary is AccQueue {
         inputs[2] = leafQueue.levels[_level][2];
         inputs[3] = leafQueue.levels[_level][3];
         inputs[4] = _leaf;
-        uint256 hashed = hash5(inputs);
+        uint256 hashed = anemoiHash5(inputs);
 
         return hashed;
     }
@@ -594,7 +595,7 @@ abstract contract AccQueueQuinary is AccQueue {
                 for (; i < hashLength; i ++) {
                     inputs[i] = z;
                 }
-                hashed = hash5(inputs);
+                hashed = anemoiHash5(inputs);
 
                 // Update the subtree from the next level onwards with the new leaf
                 _enqueue(hashed, _level + 1);

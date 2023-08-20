@@ -6,6 +6,8 @@ import {
     sha256Hash,
     hashLeftRight,
     hash5,
+    anemoiHashLeftRight,
+    anemoiHash5
 } from 'maci-crypto'
 
 const genZerosContract = (
@@ -42,9 +44,10 @@ const genZerosContract = (
             }
         } else {
             if (hashLength === 2) {
-                hashed = hashLeftRight(z, z)
+                hashed = anemoiHashLeftRight(z, z)
             } else {
-                hashed = hash5([z, z, z, z, z])
+                hashed = anemoiHash5([z, z, z, z, z])
+                // console.log(hashed)    
             }
         }
         zeros.push(hashed)

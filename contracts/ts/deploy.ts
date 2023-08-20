@@ -94,6 +94,32 @@ const log = (msg: string, quiet: boolean) => {
     }
 }
 
+const linkAnemoiLibraries = async (
+    solFileToLink: string,
+    anemoiT3Address: string,
+    anemoiT4Address: string,
+    anemoiT6Address: string,
+    quiet: boolean = false,
+) => {
+	const signer = await getDefaultSigner()
+
+	log('Linking Anemoi libraries to ' + solFileToLink, quiet)
+	const contractFactory = await ethers.getContractFactory(
+		solFileToLink,
+		{
+			signer,
+			libraries: {
+				Jive2: anemoiT3Address,
+				Jive4: anemoiT4Address,
+				Jive6: anemoiT6Address,
+			},
+		},
+	)
+
+	return contractFactory
+
+}
+
 const linkPoseidonLibraries = async (
     solFileToLink: string,
     poseidonT3Address: string,
@@ -120,6 +146,41 @@ const linkPoseidonLibraries = async (
 
 	return contractFactory
 }
+
+
+const linkHashingLibraries = async (
+    solFileToLink: string,
+    poseidonT3Address: string,
+    poseidonT4Address: string,
+    poseidonT5Address: string,
+    poseidonT6Address: string,
+    AnemoiT2Address: string,
+    AnemoiT4Address: string,
+    AnemoiT6Address: string,
+    quiet: boolean = false,
+) => {
+	const signer = await getDefaultSigner()
+
+	log('Linking Hashing libraries to ' + solFileToLink, quiet)
+	const contractFactory = await ethers.getContractFactory(
+		solFileToLink,
+		{
+			signer,
+			libraries: {
+				PoseidonT3: poseidonT3Address,
+				PoseidonT4: poseidonT4Address,
+				PoseidonT5: poseidonT5Address,
+				PoseidonT6: poseidonT6Address,
+                Jive2: AnemoiT2Address,
+                Jive4: AnemoiT4Address,
+                Jive6: AnemoiT6Address,
+			},
+		},
+	)
+
+	return contractFactory
+}
+
 
 const deployTopupCredit = async (quiet = false) => {
     return await deployContract('TopupCredit', quiet)
@@ -162,6 +223,23 @@ const deployFreeForAllSignUpGatekeeper = async (
 }
 
 
+const deployAnemoiContracts =async (quiet = false) => {
+    try {
+        const AnemoiT2Contract = await deployContract('Jive2', quiet);
+        const AnemoiT4Contract = await deployContract('Jive4', quiet);
+        const AnemoiT6Contract = await deployContract('Jive6', quiet);
+
+        return {
+            AnemoiT2Contract,
+            AnemoiT4Contract,
+            AnemoiT6Contract
+        }
+    } catch (e) {
+        console.log(e.message);
+        throw e;
+    }
+}
+
 const deployPoseidonContracts = async (quiet = false) => {
     try {
         const PoseidonT3Contract = await deployContract('PoseidonT3', quiet)
@@ -194,13 +272,19 @@ const deployPpt = async (verifierContractAddress: string, quiet = false) => {
 const deployContract = async (contractName: string, quiet: boolean = false, ...args: any) : Promise<Contract>  =>  {
     log(`Deploying ${contractName}`, quiet)
     const signer = await getDefaultSigner()
-    const contractFactory = await ethers.getContractFactory(contractName, signer)
-    const contract: Contract = await contractFactory.deploy(...args, {
-        maxFeePerGas: await getFeeData['maxFeePerGas']
-    })
+    try {
+        const contractFactory = await ethers.getContractFactory(contractName, signer)
+        const contract: Contract = await contractFactory.deploy(...args, {
+            maxFeePerGas: await getFeeData['maxFeePerGas']
+        })
+        await contract.deployTransaction.wait()
+        return contract
     
-    await contract.deployTransaction.wait()
-    return contract
+    } catch (e) {
+        console.log("error found:",e,"\n")
+        console.log("end of error")
+        throw e;
+    }
 }
 
 // deploy a contract with linked libraries
@@ -335,6 +419,7 @@ const writeContractAddresses = (
 }
 
 export {
+    deployAnemoiContracts,
     deployContract,
     deployContractWithLinkedLibraries,
     deployTopupCredit,
@@ -356,6 +441,8 @@ export {
     solDir,
     parseArtifact,
     linkPoseidonLibraries,
+    linkHashingLibraries,
+    linkAnemoiLibraries,
     deployPoseidonContracts,
 	getDefaultSigner,
     writeContractAddresses
