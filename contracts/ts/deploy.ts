@@ -333,17 +333,37 @@ const deployMaci = async (
         PoseidonT5Contract,
         PoseidonT6Contract,
     } = await deployPoseidonContracts(quiet)
+    
+    const {
+        AnemoiT2Contract,
+        AnemoiT4Contract,
+        AnemoiT6Contract
+    } = await deployAnemoiContracts(quiet)
 
     const contractsToLink = ['MACI', 'PollFactory']
 
     // Link Poseidon contracts to MACI
+    // const linkedContractFactories = contractsToLink.map(async (contractName: string) => {
+    //     return await linkPoseidonLibraries(
+    //         contractName,
+    //         PoseidonT3Contract.address,
+    //         PoseidonT4Contract.address,
+    //         PoseidonT5Contract.address,
+    //         PoseidonT6Contract.address,
+    //         quiet
+    //     )
+    // })
+
     const linkedContractFactories = contractsToLink.map(async (contractName: string) => {
-        return await linkPoseidonLibraries(
+        return await linkHashingLibraries(
             contractName,
             PoseidonT3Contract.address,
             PoseidonT4Contract.address,
             PoseidonT5Contract.address,
             PoseidonT6Contract.address,
+            AnemoiT2Contract.address,
+            AnemoiT4Contract.address,
+            AnemoiT6Contract.address,
             quiet
         )
     })

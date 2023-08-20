@@ -8,6 +8,9 @@ import {
     hashLeftRight,
     hash3,
     hash5,
+    anemoiHashLeftRight,
+    anemoiHash3,
+    anemoiHash5,
     sha256Hash,
     stringifyBigInts,
     Signature,
@@ -78,7 +81,7 @@ class Poll {
         STATE_TREE_DEPTH,
         blankStateLeafHash,
         this.STATE_TREE_ARITY,
-        hash5,
+        anemoiHash5,
     )
 
     // For message processing
@@ -131,7 +134,7 @@ class Poll {
             this.treeDepths.messageTreeDepth,
             NOTHING_UP_MY_SLEEVE,
             this.MESSAGE_TREE_ARITY,
-            hash5,
+            anemoiHash5,
         )
         this.messageAq = new AccQueue(
             this.treeDepths.messageTreeSubDepth,
@@ -171,7 +174,7 @@ class Poll {
             STATE_TREE_DEPTH,
             emptyBallot.hash(),
             this.STATE_TREE_ARITY,
-            hash5,
+            anemoiHash5,
         )
         this.ballotTree.insert(emptyBallotHash)
 
@@ -432,7 +435,7 @@ class Poll {
                                   this.treeDepths.voteOptionTreeDepth,
                                   BigInt(0),
                                   5,
-                                  hash5,
+                                  anemoiHash5,
                               )
                               for (let i = 0; i <= lastIndexToInsert; i ++) {
                                   vt.insert(this.ballots[0].votes[i])
@@ -481,7 +484,7 @@ class Poll {
                              this.treeDepths.voteOptionTreeDepth,
                              BigInt(0),
                              5,
-                             hash5,
+                             anemoiHash5,
                          )
                          for (let i = 0; i < this.ballots[0].votes.length; i ++) {
                              vt.insert(currentBallot.votes[i])
@@ -765,7 +768,7 @@ class Poll {
                 this.treeDepths.voteOptionTreeDepth,
                 BigInt(0),
                 5,
-                hash5,
+                anemoiHash5,
             )
             for (let i = 0; i < this.ballots[0].votes.length; i ++) {
                 vt.insert(ballot.votes[i])
@@ -1147,7 +1150,7 @@ class Poll {
             this.treeDepths.voteOptionTreeDepth,
             BigInt(0),
             this.VOTE_OPTION_TREE_ARITY,
-            hash5,
+            anemoiHash5,
         )
 
         for (const r of this.results) {
@@ -1186,7 +1189,7 @@ class Poll {
             this.treeDepths.voteOptionTreeDepth,
             BigInt(0),
             this.VOTE_OPTION_TREE_ARITY,
-            hash5,
+            anemoiHash5,
         )
 
         const leaves: BigInt[] = []
@@ -1355,7 +1358,7 @@ class MaciState {
         STATE_TREE_DEPTH,
         blankStateLeafHash,
         this.STATE_TREE_ARITY,
-        hash5,
+        anemoiHash5,
     )
     public stateAq: AccQueue = new AccQueue(
         this.STATE_TREE_SUBDEPTH,
@@ -1584,7 +1587,7 @@ const genTallyResultCommitment = (
     depth: number,
 ): BigInt => {
 
-    const tree = new IncrementalQuinTree(depth, BigInt(0), 5, hash5)
+    const tree = new IncrementalQuinTree(depth, BigInt(0), 5, anemoiHash5)
     for (const result of results) {
         tree.insert(result)
     }
