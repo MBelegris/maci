@@ -348,7 +348,7 @@ class AccQueue {
                 for (let j = 1; j < this.hashLength; j ++) {
                     inputs.push(z)
                 }
-                console.log("Inputs used for main root", inputs);
+                // console.log("Inputs used for main root", inputs);
                 root = this.hashFunc(inputs)
             }
 

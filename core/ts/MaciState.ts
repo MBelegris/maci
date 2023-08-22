@@ -226,13 +226,13 @@ class Poll {
             assert(d < SNARK_FIELD_SIZE)
         }
 
-        console.log("Publishing message")
+        // console.log("Publishing message")
 
         this.encPubKeys.push(_encPubKey)
         this.messages.push(_message)
 
         const messageLeaf = _message.hash(_encPubKey)
-        console.log("Hashed message leaf", messageLeaf);
+        // console.log("Hashed message leaf", messageLeaf);
         this.messageAq.enqueue(messageLeaf)
         this.messageTree.insert(messageLeaf)
 
@@ -407,7 +407,7 @@ class Poll {
                         this.ballots[index] = r.newBallot
                         this.ballotTree.update(index, r.newBallot.hash())
         
-                        console.log("Command is valid");
+                        // console.log("Command is valid");
                     }catch(e){
                         if (e.message === 'no-op') {
                               // Since the command is invalid, use a blank state leaf
@@ -448,7 +448,7 @@ class Poll {
                                   vt.genMerklePath(0).pathElements
                               )
                        
-                              console.log("Command isn't valid, using blank state leaf");
+                            //   console.log("Command isn't valid, using blank state leaf");
         
                         } else {
                             throw e
@@ -549,9 +549,9 @@ class Poll {
         if (this.numBatchesProcessed * batchSize >= this.messages.length) {
             this.maciStateRef.pollBeingProcessed = false
         }
-        console.log("Current ballots:", circuitInputs.currentBallots);
-        console.log("Current vote weights", currentVoteWeights);
-        console.log("current vote weight path elements:", currentVoteWeightsPathElements);
+        // console.log("Current ballots:", circuitInputs.currentBallots);
+        // console.log("Current vote weights", currentVoteWeights);
+        // console.log("current vote weight path elements:", currentVoteWeightsPathElements);
         return stringifyBigInts(circuitInputs)
     }
 
@@ -779,13 +779,13 @@ class Poll {
                 anemoiHash5,
             )
             for (let i = 0; i < this.ballots[0].votes.length; i ++) {
-                console.log("Adding votes:", ballot.votes[i]);
+                // console.log("Adding votes:", ballot.votes[i]);
                 vt.insert(ballot.votes[i])
             }
 
             const originalVoteWeightsPathElements =
                 vt.genMerklePath(voteOptionIndex).pathElements
-            console.log("Original vote weights path elements",originalVoteWeightsPathElements);
+            // console.log("Original vote weights path elements",originalVoteWeightsPathElements);
             return {
                 stateLeafIndex: Number(stateLeafIndex),
 

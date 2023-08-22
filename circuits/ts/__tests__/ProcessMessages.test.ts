@@ -162,7 +162,7 @@ describe('ProcessMessage circuit', () => {
             }
             const currentStateRoot = maciState.stateTree.root
             const currentBallotRoot = ballotTree.root
-            console.log("Current ballot root:", currentBallotRoot);
+            // console.log("Current ballot root:", currentBallotRoot);
             const generatedInputs = poll.processMessages(pollId)
             
             // console.log("Message Root:",generatedInputs.msgRoot);
@@ -350,7 +350,7 @@ describe('ProcessMessage circuit', () => {
                 voiceCreditBalance,
                 BigInt(1), //BigInt(Math.floor(Date.now() / 1000)),
             )
-            console.log('Signing up with', userKeypair.pubKey.rawPubKey[0])
+            // console.log('Signing up with', userKeypair.pubKey.rawPubKey[0])
 
             maciState.stateAq.mergeSubRoots(0)
             maciState.stateAq.merge(STATE_TREE_DEPTH)

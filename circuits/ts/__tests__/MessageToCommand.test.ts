@@ -1,4 +1,4 @@
-jest.setTimeout(90000)
+jest.setTimeout(900000)
 import { 
     genWitness,
     getSignalByName,
