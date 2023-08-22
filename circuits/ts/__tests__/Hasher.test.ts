@@ -251,8 +251,8 @@ describe('Poseidon hash circuits', () => {
 
                 const circuitInputs = stringifyBigInts({
                     inputs: preImages,
-                    roundConstantC: roundConstantC,
-                    roundConstantD: roundConstantD,
+                    // roundConstantC: roundConstantC,
+                    // roundConstantD: roundConstantD,
                 })
 
                 const witness = await genWitness(circuit, circuitInputs)
@@ -304,8 +304,8 @@ describe('Poseidon hash circuits', () => {
 
                 const circuitInputs = stringifyBigInts({
                     inputs: preImages,
-                    roundConstantC: roundConstantC,
-                    roundConstantD: roundConstantD,
+                    // roundConstantC: roundConstantC,
+                    // roundConstantD: roundConstantD,
                 })
 
                 const witness = await genWitness(circuit, circuitInputs)
@@ -355,10 +355,9 @@ describe('Poseidon hash circuits', () => {
 
                 const circuitInputs = stringifyBigInts({
                     inputs: preImages,
-                    roundConstantC: roundConstantC,
-                    roundConstantD: roundConstantD,
+                    // roundConstantC: roundConstantC,
+                    // roundConstantD: roundConstantD,
                 })
-                console.log(roundConstantC)
 
                 const witness = await genWitness(circuit, circuitInputs)
                 const output = await getSignalByName(circuit, witness, 'main.hash')
@@ -409,8 +408,8 @@ describe('Poseidon hash circuits', () => {
 
                 const circuitInputs = stringifyBigInts({
                     inputs: preImages,
-                    roundConstantC: roundConstantC,
-                    roundConstantD: roundConstantD,
+                    // roundConstantC: roundConstantC,
+                    // roundConstantD: roundConstantD,
                 })
 
                 const witness = await genWitness(circuit, circuitInputs)
@@ -460,10 +459,9 @@ describe('Poseidon hash circuits', () => {
 
                 const circuitInputs = stringifyBigInts({
                     inputs: [left, right],
-                    roundConstantC: roundConstantC,
-                    roundConstantD: roundConstantD,
+                    // roundConstantC: roundConstantC,
+                    // roundConstantD: roundConstantD,
                 })
-                console.log(roundConstantC);
 
                 const witness = await genWitness(circuit, circuitInputs)
                 const output = await getSignalByName(circuit, witness, 'main.hash')

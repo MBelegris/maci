@@ -168,8 +168,11 @@ template ProcessMessages(
     for (var i = 0; i < batchSize; i ++) {
         messageHashers[i] = MessageHasher();
         for (var j = 0; j < MSG_LENGTH; j ++) {
+            // log("Messages:",msgs[i][j]);
             messageHashers[i].in[j] <== msgs[i][j];
         }
+        // log("");
+        // log("");
         messageHashers[i].encPubKey[0] <== encPubKeys[i][0];
         messageHashers[i].encPubKey[1] <== encPubKeys[i][1];
     }
@@ -203,11 +206,13 @@ template ProcessMessages(
         muxes[i].s <== lt[i].out;
         muxes[i].c[0] <== msgTreeZeroValue;
         muxes[i].c[1] <== messageHashers[i].hash;
+        // log("Leaves",i,":",muxes[i].out);
         msgBatchLeavesExists.leaves[i] <== muxes[i].out;
     }
 
     for (var i = 0; i < msgTreeDepth - msgBatchDepth; i ++) {
         for (var j = 0; j < TREE_ARITY - 1; j ++) {
+            // log("Message Subroot path elements:", msgSubrootPathElements[i][j]);
             msgBatchLeavesExists.path_elements[i][j] <== msgSubrootPathElements[i][j];
         }
     }
@@ -266,7 +271,11 @@ template ProcessMessages(
     signal tmpBallotRoot2[batchSize];
     component processors[batchSize]; // vote type processor
     component processors2[batchSize]; // topup type processor
+    log("Printing current vote weights:");
+
     for (var i = batchSize - 1; i >= 0; i --) {
+        log("Processor",i, "vote:", currentVoteWeights[i]);
+
         // process it as vote type message
         processors[i] = ProcessOne(stateTreeDepth, voteOptionTreeDepth);
 
@@ -296,7 +305,7 @@ template ProcessMessages(
                     <== currentBallotsPathElements[i][j][k];
             }
         }
-
+        
         processors[i].currentVoteWeight <== currentVoteWeights[i];
 
         for (var j = 0; j < voteOptionTreeDepth; j ++) {
@@ -583,16 +592,20 @@ template ProcessOne(stateTreeDepth, voteOptionTreeDepth) {
 
     component currentVoteWeightPathIndices = QuinGeneratePathIndices(voteOptionTreeDepth);
     currentVoteWeightPathIndices.in <== cmdVoteOptionIndexMux.out;
-
+    log("Beginning poop stage");
     component currentVoteWeightQip = QuinTreeInclusionProof(voteOptionTreeDepth);
     currentVoteWeightQip.leaf <== currentVoteWeight;
+    log("Current vote weight:", currentVoteWeight);
     for (var i = 0; i < voteOptionTreeDepth; i ++) {
+        log("Current Vote Weight Qip path index:", currentVoteWeightPathIndices.out[i]);
         currentVoteWeightQip.path_index[i] <== currentVoteWeightPathIndices.out[i];
         for (var j = 0; j < TREE_ARITY - 1; j++) {
+            log("Current Vote Weights Path Elements:", currentVoteWeightsPathElements[i][j]);
             currentVoteWeightQip.path_elements[i][j] <== currentVoteWeightsPathElements[i][j];
         }
     }
-
+    log("ballot at 1:", ballot[BALLOT_VO_ROOT_IDX]);
+    log("current vote weight qip root:", currentVoteWeightQip.root);
     currentVoteWeightQip.root === ballot[BALLOT_VO_ROOT_IDX];
 
     component voteWeightMux = Mux1();

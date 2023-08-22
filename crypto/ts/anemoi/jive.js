@@ -66,8 +66,8 @@ const jive_mode = (inputs) => {
 
     if (inputs.length % 2 == 0){
         for (var i = 0; i < nInputs; i++){
-            stateX.push(inputs[2*i]);
-            stateY.push(inputs[(2*i)+1]);
+            stateX.push(BigInt(inputs[2*i]));
+            stateY.push(BigInt(inputs[(2*i)+1]));
         }
     } else {
         for (var i = 0; i < nInputs; i++){
@@ -75,10 +75,13 @@ const jive_mode = (inputs) => {
             if ((2*i) + 1 > nInputs){
                 stateY.push(BigInt("0"));
             } else {
-                stateY.push(inputs[(2*i)+1]);
+                stateY.push(BigInt(inputs[(2*i)+1]));
             }
         }
     }
+
+    // console.log("X:", stateX)
+    // console.log("Y:", stateY)
 
     anemoi = anemoiPerm(prime_field, nInputs, numRounds, BigInt(generator), inverse_generator, BigInt(alpha), inverse_alpha,
         BigInt(beta), gamma, delta, stateX, stateY);

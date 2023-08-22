@@ -15,6 +15,7 @@ import {
     hash13,
     hash4,
     hash5,
+    anemoiHash5,
     verifySignature,
     genRandomSalt,
     genKeypair,
@@ -489,7 +490,7 @@ class Ballot {
             this.voteOptionTreeDepth,
             BigInt(0),
             5,
-            hash5,
+            anemoiHash5,
         )
         for (let i = 0; i <= lastIndexToInsert; i ++) {
             voTree.insert(this.votes[i])

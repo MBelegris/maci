@@ -22,8 +22,8 @@ template constantAddition(nInputs){
     signal output outY[nInputs];
     
     for (var i=0; i < nInputs; i++){
-        log("Round Constant C:", c[i]);
-        log("Round Constant D:", d[i]);
+        // log("Round Constant C:", c[i]);
+        // log("Round Constant D:", d[i]);
         outX[i] <== X[i] + c[i];
         outY[i] <== Y[i] + d[i];    
     }
@@ -232,7 +232,7 @@ function fast_exp(base, exponent) {
 }
 
 template openFlystel(alpha){
-    log("In Open Flystel");
+    // log("In Open Flystel");
     // Open Flystel network H maps (x,y) to (u,v)
     // 1. x <- x - Qγ(y)
     // 2. y <- y - E^-1(x)
@@ -257,18 +257,18 @@ template openFlystel(alpha){
     signal y_square <== y*y;
 
     t <== x - (beta*y_square) - gamma;
-    log("t:", t);
+    // log("t:", t);
     
     var t_power_inv = fast_exp(t, alpha);
     signal t_power_inv_a <-- t_power_inv;
 
     v <== y - t_power_inv_a;
-    log("v:",v);
+    // log("v:",v);
 
     signal v_squared <== v*v;
 
     u <== t + (beta*v_squared) + delta;
-    log("u:",u);
+    // log("u:",u);
 }
 
 template closedFlystel(nInputs, alpha){
@@ -365,10 +365,10 @@ template Anemoi(nInputs, numRounds, exp, inv_exp){
     signal input c[numRounds][nInputs];
     signal input d[numRounds][nInputs];
 
-    log("Exponent:", exp);
-    log("Inverse Exponent:", inv_exp);
-    log("Generator:", g);
-    log("Inverse Generator:", inv_g);
+    // log("Exponent:", exp);
+    // log("Inverse Exponent:", inv_exp);
+    // log("Generator:", g);
+    // log("Inverse Generator:", inv_g);
 
     signal output outX[nInputs];
     signal output outY[nInputs];
@@ -402,10 +402,10 @@ template Anemoi(nInputs, numRounds, exp, inv_exp){
 
     component verify[numRounds];
 
-    log("");
-    log("");
+    // log("");
+    // log("");
     for (var i = 0; i < numRounds; i++){
-        log("Round:", i);
+        // log("Round:", i);
         // Constant Addition A
         constantAddition[i] = constantAddition(nInputs);
         constantAddition[i].c <== c[i];
@@ -414,10 +414,10 @@ template Anemoi(nInputs, numRounds, exp, inv_exp){
         constantAddition[i].Y <== roundY[4*i]; 
         roundX[(4*i)+1] <== constantAddition[i].outX;
         roundY[(4*i)+1] <== constantAddition[i].outY;
-        for (var num = 0; num < nInputs; num++){
-            log("Constant Addition Output X:", roundX[(4*i)+1][num]);
-            log("Constant Addition Output Y:", roundY[(4*i)+1][num]);
-        }
+        // for (var num = 0; num < nInputs; num++){
+            // log("Constant Addition Output X:", roundX[(4*i)+1][num]);
+            // log("Constant Addition Output Y:", roundY[(4*i)+1][num]);
+        // }
 
         // Linear Layer M
         diffusionLayer[i] = diffusionLayer(nInputs);
@@ -426,10 +426,10 @@ template Anemoi(nInputs, numRounds, exp, inv_exp){
         diffusionLayer[i].g <== g;
         roundX[(4*i)+2] <== diffusionLayer[i].outX;
         roundY[(4*i)+2] <== diffusionLayer[i].outY;
-        for (var num = 0; num < nInputs; num++){
-            log("Linear Layer Output X:", roundX[(4*i)+2][num]);
-            log("Linear Layer Output Y:", roundY[(4*i)+2][num]);
-        }
+        // for (var num = 0; num < nInputs; num++){
+            // log("Linear Layer Output X:", roundX[(4*i)+2][num]);
+            // log("Linear Layer Output Y:", roundY[(4*i)+2][num]);
+        // }
 
         // PHT P
         phtLayer[i] = PHT(nInputs);
@@ -437,10 +437,10 @@ template Anemoi(nInputs, numRounds, exp, inv_exp){
         phtLayer[i].Y <== roundY[(4*i) + 2];
         roundX[(4*i) + 3] <== phtLayer[i].outX;
         roundY[(4*i) + 3] <== phtLayer[i].outY;
-        for (var num = 0; num < nInputs; num++){
-            log("PHT Output X:", roundX[(4*i)+3][num]);
-            log("PHT Output Y:", roundY[(4*i)+3][num]);
-        }
+        // for (var num = 0; num < nInputs; num++){
+        //     log("PHT Output X:", roundX[(4*i)+3][num]);
+        //     log("PHT Output Y:", roundY[(4*i)+3][num]);
+        // }
 
 
         // S-box Layer H
@@ -455,13 +455,13 @@ template Anemoi(nInputs, numRounds, exp, inv_exp){
         sBox[i].delta <== 0;
         roundX[(4*i) + 4] <== sBox[i].outX;
         roundY[(4*i) + 4] <== sBox[i].outY;
-        for (var num = 0; num < nInputs; num++){
-            log("S Box Output X:", roundX[(4*i)+4][num]);
-            log("S Box Output Y:", roundY[(4*i)+4][num]);
-        }
+        // for (var num = 0; num < nInputs; num++){
+        //     log("S Box Output X:", roundX[(4*i)+4][num]);
+        //     log("S Box Output Y:", roundY[(4*i)+4][num]);
+        // }
 
-        log("");
-        log("");
+        // log("");
+        // log("");
 
         // Verifying the output of the sBox
         // verify[i] = sBoxVerify(nInputs, exp);

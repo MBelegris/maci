@@ -88,8 +88,8 @@ function addConstants(prime_field, nInputs, roundNum, stateX, stateY, roundConst
         // console.log("Round Constant D:", roundConstantD[roundNum][i]);
         // outX.push(Scalar.mod(Scalar.add(stateX[i], roundConstantC[roundNum][i]), prime_field));
         // outY.push(Scalar.mod(Scalar.add(stateY[i], roundConstantD[roundNum][i]), prime_field));
-        var x = (stateX[i] + roundConstantC[roundNum][i]) % prime_field;
-        var y = (stateY[i] + roundConstantD[roundNum][i]) % prime_field;
+        var x = (BigInt(stateX[i]) + roundConstantC[roundNum][i]) % prime_field;
+        var y = (BigInt(stateY[i]) + roundConstantD[roundNum][i]) % prime_field;
         outX.push(x);
         outY.push(y);
         

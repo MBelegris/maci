@@ -20,6 +20,7 @@ import {
 
 import {
     hash5,
+    anemoiHash5,
     IncrementalQuinTree,
     stringifyBigInts,
     NOTHING_UP_MY_SLEEVE,
@@ -102,7 +103,7 @@ describe('ProcessMessage circuit', () => {
             const message = command.encrypt(signature, sharedKey)
             messages.push(message)
             commands.push(command)
-
+            // console.log("Message1:",message);
             poll.publishMessage(message, ecdhKeypair.pubKey)
 
             // Second command (valid)
@@ -124,10 +125,13 @@ describe('ProcessMessage circuit', () => {
             const message2 = command2.encrypt(signature2, sharedKey2)
             messages.push(message2)
             commands.push(command2)
+            // console.log("Message2:",message2);
             poll.publishMessage(message2, ecdhKeypair2.pubKey)
 
             poll.messageAq.mergeSubRoots(0)
             poll.messageAq.merge(treeDepths.messageTreeDepth)
+
+            // console.log("Message Tree root:",poll.messageTree.root.toString());
 
             expect(poll.messageTree.root.toString())
                 .toEqual(
@@ -148,7 +152,7 @@ describe('ProcessMessage circuit', () => {
                 STATE_TREE_DEPTH,
                 emptyBallot.hash(),
                 poll.STATE_TREE_ARITY,
-                hash5,
+                anemoiHash5,
             )
 
             ballotTree.insert(emptyBallot.hash())
@@ -158,8 +162,18 @@ describe('ProcessMessage circuit', () => {
             }
             const currentStateRoot = maciState.stateTree.root
             const currentBallotRoot = ballotTree.root
-
+            console.log("Current ballot root:", currentBallotRoot);
             const generatedInputs = poll.processMessages(pollId)
+            
+            // console.log("Message Root:",generatedInputs.msgRoot);
+            // var txt = "Messages:\n";
+            // console.log("Leaves(unhashed):",generatedInputs.msgs[0].hash)
+            // for (let i = 0; i < generatedInputs.msgs.length; i++){
+            //     txt += generatedInputs.msgs[i]+ "\n";
+            // }
+            // console.log(txt);
+            // console.log("Subroot path elements:",generatedInputs.msgSubrootPathElements);
+
                         
             // Calculate the witness
             const witness = await genWitness(circuit, generatedInputs)
@@ -289,7 +303,7 @@ describe('ProcessMessage circuit', () => {
                 STATE_TREE_DEPTH,
                 emptyBallot.hash(),
                 poll.STATE_TREE_ARITY,
-                hash5,
+                anemoiHash5,
             )
 
             ballotTree.insert(emptyBallot.hash())
@@ -444,7 +458,7 @@ describe('ProcessMessage circuit', () => {
                 STATE_TREE_DEPTH,
                 emptyBallot.hash(),
                 poll.STATE_TREE_ARITY,
-                hash5,
+                anemoiHash5,
             )
 
             ballotTree.insert(NOTHING_UP_MY_SLEEVE)

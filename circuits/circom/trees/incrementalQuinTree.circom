@@ -4,6 +4,7 @@ include "../../node_modules/circomlib/circuits/comparators.circom";
 include "../hasherPoseidon.circom";
 include "./calculateTotal.circom";
 include "./checkRoot.circom";
+include "../hasherAnemoi.circom";
 
 // This file contains circuits for quintary Merkle tree verifcation.
 // It assumes that each node contains 5 leaves, as we use the PoseidonT6
@@ -62,6 +63,7 @@ template QuinSelector(choices) {
  * leaf = 10, the output will be [0, 20, 30, 10, 40].
  */
 template Splicer(numItems) {
+    // log("Splicer");
     // Since we only insert one item, the number of output items is 1 +
     // numItems
     var NUM_OUTPUT_ITEMS = numItems + 1;
@@ -141,6 +143,7 @@ template Splicer(numItems) {
 }
 
 template QuinTreeInclusionProof(levels) {
+    // log("QuinTreeInclusionProof");
     // Each node has 5 leaves
     var LEAVES_PER_NODE = 5;
     var LEAVES_PER_PATH_LEVEL = LEAVES_PER_NODE - 1;
@@ -158,19 +161,20 @@ template QuinTreeInclusionProof(levels) {
 
     // Hash the first level of path_elements
     splicers[0] = Splicer(LEAVES_PER_PATH_LEVEL);
-    hashers[0] = Hasher5();
+    hashers[0] = AnemoiHasher5();
     splicers[0].index <== path_index[0];
     splicers[0].leaf <== leaf;
     for (i = 0; i < LEAVES_PER_PATH_LEVEL; i++) {
+        // log("Splicer Input (path elements):",path_elements[0][i]);
         splicers[0].in[i] <== path_elements[0][i];
     }
-
+    // log("Hashing first level of path elements");
     for (i = 0; i < LEAVES_PER_NODE; i++) {
-        hashers[0].in[i] <== splicers[0].out[i];
+        // log("Hashing splicer output:",splicers[0].out[i]);
+        hashers[0].inputs[i] <== splicers[0].out[i];
     }
 
     // Hash each level of path_elements
-
     for (i = 1; i < levels; i++) {
         splicers[i] = Splicer(LEAVES_PER_PATH_LEVEL);
         splicers[i].index <== path_index[i];
@@ -179,9 +183,11 @@ template QuinTreeInclusionProof(levels) {
             splicers[i].in[j] <== path_elements[i][j];
         }
 
-        hashers[i] = Hasher5();
+        // log("Hashing each level of path elements");
+        hashers[i] = AnemoiHasher5();
         for (j = 0; j < LEAVES_PER_NODE; j ++) {
-            hashers[i].in[j] <== splicers[i].out[j];
+            // log("Hashing splicer output:",splicers[i].out[j]);
+            hashers[i].inputs[j] <== splicers[i].out[j];
         }
     }
     
@@ -190,7 +196,7 @@ template QuinTreeInclusionProof(levels) {
 
 template QuinLeafExists(levels){
     // Ensures that a leaf exists within a quintree with given `root`
-
+    // log("QuinLeafExists");
     var LEAVES_PER_NODE = 5;
     var LEAVES_PER_PATH_LEVEL = LEAVES_PER_NODE - 1;
 
@@ -211,11 +217,13 @@ template QuinLeafExists(levels){
             verifier.path_elements[i][j] <== path_elements[i][j];
         }
     }
-
+    // log("verifier root:", verifier.root);
+    // log("inputed root:", root);
     root === verifier.root;
 }
 
 template QuinBatchLeavesExists(levels, batchLevels) {
+    // log("Quin Batch Leaves Exist");
     // Compute the root of a subtree of leaves, and then check whether the
     // subroot exists in the main tree
 

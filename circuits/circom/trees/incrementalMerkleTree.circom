@@ -5,6 +5,7 @@ pragma circom 2.0.0;
 
 include "../../node_modules/circomlib/circuits/mux1.circom";
 include "../hasherPoseidon.circom";
+include "../hasherAnemoi.circom";
 
 template MerkleTreeInclusionProof(n_levels) {
     signal input leaf;
@@ -22,7 +23,7 @@ template MerkleTreeInclusionProof(n_levels) {
         // Should be 0 or 1
         path_index[i] * (1 - path_index[i]) === 0;
 
-        hashers[i] = HashLeftRight();
+        hashers[i] = AnemoiHashLeftRight();
         mux[i] = MultiMux1(2);
 
         mux[i].c[0][0] <== levelHashes[i];
@@ -32,8 +33,8 @@ template MerkleTreeInclusionProof(n_levels) {
         mux[i].c[1][1] <== levelHashes[i];
 
         mux[i].s <== path_index[i];
-        hashers[i].left <== mux[i].out[0];
-        hashers[i].right <== mux[i].out[1];
+        hashers[i].inputs[0] <== mux[i].out[0];
+        hashers[i].inputs[1] <== mux[i].out[1];
 
         levelHashes[i + 1] <== hashers[i].hash;
     }
@@ -102,20 +103,25 @@ template CheckRoot(levels) {
     // Instantiate all hashers
     var i;
     for (i=0; i < numHashers; i++) {
-        hashers[i] = HashLeftRight();
+        hashers[i] = AnemoiHashLeftRight();
     }
 
     // Wire the leaf values into the leaf hashers
     for (i=0; i < numLeafHashers; i++){
-        hashers[i].left <== leaves[i*2];
-        hashers[i].right <== leaves[i*2+1];
+        // hashers[i].left <== leaves[i*2];
+        // hashers[i].right <== leaves[i*2+1];
+        hashers[i].inputs[0] <== leaves[i*2];
+        hashers[i].inputs[1] <== leaves[i*2+1];
     }
 
     // Wire the outputs of the leaf hashers to the intermediate hasher inputs
     var k = 0;
     for (i=numLeafHashers; i<numLeafHashers + numIntermediateHashers; i++) {
-        hashers[i].left <== hashers[k*2].hash;
-        hashers[i].right <== hashers[k*2+1].hash;
+        // hashers[i].left <== hashers[k*2].hash;
+        // hashers[i].right <== hashers[k*2+1].hash;
+        
+        hashers[i].inputs[0] <== hashers[k*2].hash;
+        hashers[i].inputs[1] <== hashers[k*2+1].hash;
         k++;
     }
 

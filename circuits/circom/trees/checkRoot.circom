@@ -1,5 +1,6 @@
 pragma circom 2.0.0;
 include "../hasherPoseidon.circom";
+include "../hasherAnemoi.circom";
 
 /*template QuinCheckRootWithSha256(levels, subLevels) {*/
     /*// Given a quin Merkle root and a list of leaves, check if the root is the*/
@@ -66,13 +67,13 @@ template QuinCheckRoot(levels) {
 
     // Instantiate all hashers
     for (i = 0; i < numHashers; i ++) {
-        hashers[i] = Hasher5();
+        hashers[i] = AnemoiHasher5();
     }
 
     // Wire the leaf values into the leaf hashers
     for (i = 0; i < numLeafHashers; i ++){
         for (j = 0; j < LEAVES_PER_NODE; j ++){
-            hashers[i].in[j] <== leaves[i * LEAVES_PER_NODE + j];
+            hashers[i].inputs[j] <== leaves[i * LEAVES_PER_NODE + j];
         }
     }
 
@@ -80,7 +81,7 @@ template QuinCheckRoot(levels) {
     var k = 0;
     for (i = numLeafHashers; i < numHashers; i ++) {
         for (j = 0; j < LEAVES_PER_NODE; j ++){
-            hashers[i].in[j] <== hashers[k * LEAVES_PER_NODE + j].hash;
+            hashers[i].inputs[j] <== hashers[k * LEAVES_PER_NODE + j].hash;
         }
         k ++;
     }

@@ -115,12 +115,12 @@ class AccQueue {
 
         // Set this.hashFunc depending on the number of leaves per node
         if (this.hashLength === 2) {
-            // Uses PoseidonT3 under the hood, which accepts 2 inputs
+            // Uses AnemoiT3 under the hood, which accepts 2 inputs
             this.hashFunc = (inputs: BigInt[]) => {
                 return anemoiHashLeftRight(inputs[0], inputs[1])
             }
         } else {
-            // Uses PoseidonT6 under the hood, which accepts up to 5 inputs
+            // Uses AnemoiT6 under the hood, which accepts up to 5 inputs
             this.hashFunc = anemoiHash5
         }
 
@@ -348,7 +348,7 @@ class AccQueue {
                 for (let j = 1; j < this.hashLength; j ++) {
                     inputs.push(z)
                 }
-
+                console.log("Inputs used for main root", inputs);
                 root = this.hashFunc(inputs)
             }
 
