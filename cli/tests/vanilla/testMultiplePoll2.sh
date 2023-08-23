@@ -33,28 +33,36 @@ POLL_ID=0
 init_maci
 deploy_poll
 
-node ./build/index.js signup \
+echo "signup 1"
+$MACI_CLI signup \
     --pubkey $pk1
 
-node ./build/index.js signup \
+echo "signup 2"
+$MACI_CLI signup \
     --pubkey $pk2
 
-node ./build/index.js signup \
+echo "signup 3"
+$MACI_CLI signup \
     --pubkey $pk3
 
-node ./build/index.js signup \
+echo "signup 4"
+$MACI_CLI signup \
     --pubkey $pk4
 
-node ./build/index.js signup \
+echo "signup 5"
+$MACI_CLI signup \
     --pubkey $pk5
 
-node ./build/index.js signup \
+echo "signup 6"
+$MACI_CLI signup \
     --pubkey $pk6
 
-node ./build/index.js signup \
+echo "signup 7"
+$MACI_CLI signup \
     --pubkey $pk7  
 
-node build/index.js publish \
+echo "Publish 1"
+$MACI_CLI publish \
     --pubkey $pk1 \
     --privkey $sk1 \
     --state-index 1 \
@@ -65,13 +73,15 @@ node build/index.js publish \
 
 
 $MACI_CLI timeTravel \
-    --seconds 90
+    --seconds 500
 
 # Step 2: 
 # TODO: store the txn of deployVkRegistry to automate
 # txn is the transaction hash of deployVkRegistry
+echo "Gen Proofs 1"
 gen_proofs "$POLL_ID"
 
+echo "Prove and Verify on Chain 1"
 prove_and_verify_on_chain "$POLL_ID"
 
 
@@ -82,7 +92,8 @@ deploy_poll
 
 POLL_ID=1
 
-node build/index.js publish \
+echo "Publish 2"
+$MACI_CLI publish \
     --pubkey $pk1 \
     --privkey $sk1 \
     --state-index 1 \
@@ -90,7 +101,8 @@ node build/index.js publish \
     --new-vote-weight 9 \
     --nonce 1 --poll-id "$POLL_ID"
 
-node build/index.js publish \
+echo "Publish 3"
+$MACI_CLI publish \
     --pubkey $pk2 \
     --privkey $sk2 \
     --state-index 2 \
@@ -99,7 +111,8 @@ node build/index.js publish \
     --nonce 1 \
     --poll-id "$POLL_ID"
 
-node build/index.js publish \
+echo "Publish 4"
+$MACI_CLI publish \
     --pubkey $pk3 \
     --privkey $sk3 \
     --state-index 3 \
@@ -110,7 +123,8 @@ node build/index.js publish \
 
 POLL_ID=2
 
-node build/index.js publish \
+echo "Publish 5"
+$MACI_CLI publish \
     --pubkey $pk1 \
     --privkey $sk1 \
     --state-index 1 \
@@ -119,7 +133,8 @@ node build/index.js publish \
     --nonce 1 \
     --poll-id "$POLL_ID"
 
-node build/index.js publish \
+echo "Publish 6"
+$MACI_CLI publish \
     --pubkey $pk2 \
     --privkey $sk2 \
     --state-index 2 \
@@ -128,7 +143,8 @@ node build/index.js publish \
     --nonce 1 \
     --poll-id "$POLL_ID"
 
-node build/index.js publish \
+echo "Publish 7"
+$MACI_CLI publish \
     --pubkey $pk5 \
     --privkey $sk5 \
     --state-index 5 \
@@ -140,14 +156,16 @@ node build/index.js publish \
 
 
 $MACI_CLI timeTravel \
-    --seconds 90
+    --seconds 500
 
 clean
 
 POLL_ID=2
 
+echo "Generate Proofs 2"
 gen_proofs "$POLL_ID"
 
+echo "Prove and Verify on Chain 2"
 prove_and_verify_on_chain "$POLL_ID"
 
 
@@ -155,8 +173,10 @@ clean
 
 POLL_ID=1
 
+echo "Gen proofs 3"
 gen_proofs "$POLL_ID"
 
+echo "Prove and Verify on Chain 3"
 prove_and_verify_on_chain "$POLL_ID"
 
 

@@ -15,9 +15,11 @@ POLL_ID=0
 init_maci
 deploy_poll
 
+echo "signup"
 $MACI_CLI signup \
     --pubkey macipk.b8590fdba5e9cde5606dad5db384be4d253d0a2064d1e03f9600ee021a7ebe16 \
 
+echo "publish 1"
 # Vote for option 0
 $MACI_CLI publish \
     --pubkey macipk.b8590fdba5e9cde5606dad5db384be4d253d0a2064d1e03f9600ee021a7ebe16 \
@@ -33,7 +35,7 @@ $MACI_CLI publish \
 
 # Private key: macisk.220b09bca39ddc56deaaecddcdf616529cd2ed3eeda2354795515f17894e1c65
 # Public key:  macipk.b42b0da48010682d8c781d403f6b83db00c5e0970094ef3618393e7a3262c320
-
+echo "publish 2"
 $MACI_CLI publish \
     --pubkey macipk.b42b0da48010682d8c781d403f6b83db00c5e0970094ef3618393e7a3262c320 \
     --privkey macisk.2ae4f199bf3925a2407f7c775c9261f351ab861d8e9ecbb84622bdd3f6d41b08 \
@@ -45,6 +47,7 @@ $MACI_CLI publish \
 
 # Vote for option 1 with new key
 
+echo "publish 3"
 $MACI_CLI publish \
     --pubkey macipk.b42b0da48010682d8c781d403f6b83db00c5e0970094ef3618393e7a3262c320 \
     --privkey macisk.220b09bca39ddc56deaaecddcdf616529cd2ed3eeda2354795515f17894e1c65 \
@@ -55,8 +58,10 @@ $MACI_CLI publish \
     --poll-id "$POLL_ID"
 
 $MACI_CLI timeTravel \
-    --seconds 90
+    --seconds 500
 
+echo "Gen proofs"
 gen_proofs "$POLL_ID"
 
+echo "Prove and verify on Chain"
 prove_and_verify_on_chain "$POLL_ID"

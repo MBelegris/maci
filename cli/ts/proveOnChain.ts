@@ -165,6 +165,7 @@ const proveOnChain = async (args: any) => {
                 const filename = filenames[i]
                 const filepath = path.join(args.proof_dir, filename)
                 let match = filename.match(/process_(\d+)/)
+                // console.log("Process Messages filename:", match);
                 if (match != null) {
                     data.processProofs[Number(match[1])] = JSON.parse(fs.readFileSync(filepath).toString())
                     numProcessProofs ++
@@ -172,6 +173,8 @@ const proveOnChain = async (args: any) => {
                 }
     
                 match = filename.match(/tally_(\d+)/)
+                // console.log("Tally filename:", match);
+
                 if (match != null) {
                     data.tallyProofs[Number(match[1])] = JSON.parse(fs.readFileSync(filepath).toString())
                     continue
@@ -259,6 +262,7 @@ const proveOnChain = async (args: any) => {
     
             const txErr = 'Error: processMessages() failed'
             const { proof, circuitInputs, publicInputs } = data.processProofs[i]
+            // console.log("Circuit inputs:",circuitInputs);
     
             // Perform checks
             if (circuitInputs.pollEndTimestamp !== pollEndTimestampOnChain.toString()) {
@@ -274,12 +278,15 @@ const proveOnChain = async (args: any) => {
             let currentSbCommitmentOnChain
     
             if (numBatchesProcessed === 0) {
+                // console.log("Num batches processed = 0")
                 currentSbCommitmentOnChain = BigInt(await pollContract.currentSbCommitment())
             } else {
+                // console.log("Num batches processed not 0");
                 currentSbCommitmentOnChain = BigInt(await pptContract.sbCommitment())
             }
-    
-            if (currentSbCommitmentOnChain.toString() !== circuitInputs.currentSbCommitment) {
+            // console.log("Poll contract merged state root:", (await pollContract.mergedStateRoot()).toString());
+            // console.log("Circuit merged state root:", circuitInputs.mergedStateRoot);
+            if (currentSbCommitmentOnChain.toString() !== circuitInputs.currentSbCommitment) {        
                 console.error('Error: currentSbCommitment mismatch.')
                 return 1
             }

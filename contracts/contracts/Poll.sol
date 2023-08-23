@@ -4,6 +4,7 @@ pragma solidity ^0.8.10;
 import {IMACI} from "./IMACI.sol";
 import {Params} from "./Params.sol";
 import {Hasher} from "./crypto/Hasher.sol";
+import {AnemoiHasher} from "./crypto/AnemoiHasher.sol";
 import {Verifier} from "./crypto/Verifier.sol";
 import {SnarkCommon} from "./crypto/SnarkCommon.sol";
 import {SnarkConstants} from "./crypto/SnarkConstants.sol";
@@ -164,7 +165,8 @@ contract Poll is
     SnarkCommon,
     Ownable,
     PollDeploymentParams,
-    EmptyBallotRoots
+    EmptyBallotRoots,
+    AnemoiHasher
 {
     using SafeERC20 for ERC20;
 
@@ -532,7 +534,7 @@ contract Poll is
         uint256 _index,
         uint256 _leaf,
         uint256[][] memory _pathElements
-    ) internal pure returns (uint256) {
+    ) internal view returns (uint256) {
         uint256 pos = _index % LEAVES_PER_NODE;
         uint256 current = _leaf;
         uint8 k;
@@ -555,7 +557,7 @@ contract Poll is
 
             _index /= LEAVES_PER_NODE;
             pos = _index % LEAVES_PER_NODE;
-            current = hash5(level);
+            current = anemoiHash5(level);
         }
         return current;
     }

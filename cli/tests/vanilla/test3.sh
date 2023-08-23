@@ -14,22 +14,28 @@ POLL_ID=0
 init_maci
 deploy_poll
 
+echo "signup 1"
 $MACI_CLI signup \
     --pubkey macipk.b1672ac299bb443f89bca9aeface6edfa5319a4b2135588ca1bfb352d7d09d1e
 
+echo "signup 2"
 $MACI_CLI signup \
     --pubkey macipk.193c37dcb7db9bca854448e2b99b5d7e33e4c8a6f032e472a32578972e64031a
 
+echo "signup 3"
 $MACI_CLI signup \
     --pubkey macipk.c380cb7b743da3ee6f72f847f3f8e0ab2a49fe4326547d1784555b04add4cc2c 
 
+echo "signup 4"
 $MACI_CLI signup \
     --pubkey macipk.4e1bdd5cbe0cfc9aa5b28cf0e7440932b689abd5e19072162495d312f3cc6525
 
+echo "signup 5"
 $MACI_CLI signup \
     --pubkey macipk.e312ccfd650ae6319350b2fbd40f0900c0896fbd4bd03cebfb98f8c6df187096
 
-node build/index.js publish \
+echo "publish 1"
+$MACI_CLI publish \
     --privkey macisk.292ee6e47ff0225c12a2875408be223ad6653f73e4719496bad98838d3d4d4aa \
     --pubkey macipk.b1672ac299bb443f89bca9aeface6edfa5319a4b2135588ca1bfb352d7d09d1e \
     --state-index 1 \
@@ -39,8 +45,10 @@ node build/index.js publish \
     --poll-id "$POLL_ID"
 
 $MACI_CLI timeTravel \
-    --seconds 90
+    --seconds 500
 
+echo "Gen proofs"
 gen_proofs "$POLL_ID"
 
+echo "Prove and Verify on Chain"
 prove_and_verify_on_chain "$POLL_ID"

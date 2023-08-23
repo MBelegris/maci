@@ -76,7 +76,7 @@ $MACI_CLI publish \
 
 
 $MACI_CLI timeTravel \
-    --seconds 90
+    --seconds 500
 
 gen_proofs "$POLL_ID"
 

@@ -16,6 +16,7 @@ SUBSIDY_PER_BATCH_PARAMS="10-1-2_$ZKEYS_POSTFIX"
 
 
 init_maci() {
+
     $MACI_CLI deployVkRegistry
 
     $MACI_CLI setVerifyingKeys \
@@ -34,7 +35,7 @@ init_maci() {
 deploy_poll() {
     $MACI_CLI deployPoll \
         --pubkey macipk.c974f4f168b79727ac98bfd53a65ea0b4e45dc2552fe73df9f8b51ebb0930330 \
-        --duration 90 \
+        --duration 500 \
         --max-messages 25 \
         --max-vote-options 25 \
         --int-state-tree-depth 1 \
@@ -64,9 +65,9 @@ gen_proofs() {
     $MACI_CLI genProofs \
         --privkey macisk.49953af3585856f539d194b46c82f4ed54ec508fb9b882940cbe68bbc57e59e \
         --poll-id $1 \
-        --rapidsnark ~/rapidsnark/build/prover \
-        --process-witnessgen ./zkeys/ProcessMessages_"$PROCESS_MESSAGES_PARAMS" \
-        --tally-witnessgen ./zkeys/TallyVotes_"$TALLY_VOTES_PARAMS" \
+        --rapidsnark ../../../../rapidsnark/build/prover \
+        --process-witnessgen ./../../zkeys/ProcessMessages_"$PROCESS_MESSAGES_PARAMS" \
+        --tally-witnessgen ./../../zkeys/TallyVotes_"$TALLY_VOTES_PARAMS" \
         --process-zkey "$ZKEYS_DIR"/ProcessMessages_"$PROCESS_MESSAGES_PARAMS".0.zkey \
         --tally-zkey "$ZKEYS_DIR"/TallyVotes_"$TALLY_VOTES_PARAMS".0.zkey \
         --tally-file tally.json \
