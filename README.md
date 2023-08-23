@@ -17,6 +17,12 @@ https://privacy-scaling-explorations.github.io/maci/
 We welcome contributions to this project. Please join our
 [Telegram group][telegram-link] to discuss.
 
+## Anemoi Implementation
+
+This branch of MACI uses the Anemoi Hash Function in Jive mode for faster and more efficient Merkle Tree hashing algorithm. For more details of the hashing algorithm see [here](https://eprint.iacr.org/2022/840). 
+
+The Anemoi Implementation here takes from the implementation created [here](https://github.com/MBelegris/AnemoiCircom). 
+
 ## Packages
 
 Below you can find a list of the packages included in this repository.
