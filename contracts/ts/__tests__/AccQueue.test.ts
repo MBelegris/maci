@@ -431,7 +431,6 @@ describe('AccQueues', () => {
         let aqContract
 
         beforeAll(async () => {
-            console.log("Poop!")
             const r = await deploy(
                 'AccQueueBinary0',
                 SUB_DEPTH,
